@@ -157,6 +157,7 @@ class DeckPredictionTree:
 						for additional_match in matches[2:]:
 							if candidate_decks[additional_match] == first_match_popularity:
 								top_matches.append(additional_match)
+						# Choose a random deck from the ones with top popularity
 						final_match = top_matches[randrange(0, len(top_matches))]
 						return int(final_match), node, False, match_attempts
 					else:

@@ -1,6 +1,7 @@
 import json
 from hashlib import sha1
 from io import StringIO
+from itertools import permutations
 
 from dateutil.parser import parse as dateutil_parse
 from django.conf import settings
@@ -663,11 +664,27 @@ def update_global_players(global_game, entity_tree, meta, upload_event, exporter
 						num_played_cards=len(played_cards_for_player)
 					)
 
-					tree.observe(
-						deck.id,
-						deck.dbf_map(),
-						played_card_dbfs
-					)
+					# observe slight variations of play sequence
+					if settings.DECK_PREDICTION_OBSERVATION_SHUFFLE:
+						shuffle_card_limit = settings.DECK_PREDICTION_OBSERVATION_CARD_LIMIT
+
+						shuffle_card_dbfs = played_card_dbfs[:shuffle_card_limit]
+						append_card_dbfs = played_card_dbfs[shuffle_card_limit:]
+
+						for perm in permutations(shuffle_card_dbfs):
+							tree.observe(
+								deck.id,
+								deck.dbf_map(),
+								list(perm) + append_card_dbfs
+							)
+					else:
+						# just observe the original version
+						tree.observe(
+							deck.id,
+							deck.dbf_map(),
+							played_card_dbfs
+						)
+
 					# deck_id == proxy_deck_id for complete decks
 					deck.guessed_full_deck = deck
 					deck.save()

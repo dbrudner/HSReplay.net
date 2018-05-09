@@ -474,6 +474,10 @@ WEBHOOKS = {
 # Less than 2,000 unique possible decks, which can be safely brute force searched
 DECK_PREDICTION_MINIMUM_CARDS = 3
 
+# Observe shuffled versions of full deck lists to reduce sparseness
+DECK_PREDICTION_OBSERVATION_SHUFFLE = True
+DECK_PREDICTION_OBSERVATION_CARD_LIMIT = 2
+
 # Set false to increase redis brute force search efficiency
 INCLUDE_CURRENT_BUCKET_IN_LOOKUP = False
 

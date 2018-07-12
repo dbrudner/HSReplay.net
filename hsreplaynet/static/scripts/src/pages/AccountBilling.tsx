@@ -413,15 +413,21 @@ class AccountBilling extends React.Component<Props, State> {
 													</td>
 													<td>
 														{invoice.total < 0 ? (
-															<Trans>
-																{this.currencyAmount(
-																	invoice.total,
-																	invoice.currency,
-																)}{" "}
-																<span className="label label-success">
-																	Credit
-																</span>
-															</Trans>
+															<Trans
+																defaults="<0></0> <1>Credit</1>"
+																components={[
+																	this.currencyAmount(
+																		invoice.total,
+																		invoice.currency,
+																	),
+																	<span
+																		className="label label-success"
+																		key={1}
+																	>
+																		1
+																	</span>,
+																]}
+															/>
 														) : (
 															this.currencyAmount(
 																invoice.total,
@@ -625,16 +631,16 @@ class AccountBilling extends React.Component<Props, State> {
 							<hr />
 							<h4>{t("Pending charges")}</h4>
 							<p>
-								<Trans>
-									You have{" "}
-									{this.currencyAmount(
-										stripe.pending_charges,
-										stripe.currency,
-									)}{" "}
-									in pending charges.<br />
-									This may have been from a previous
-									unattempted charge.
-								</Trans>
+								<Trans
+									defaults="You have <0></0> in pending charges.<1></1>This may have been from a previous unattempted charge."
+									components={[
+										this.currencyAmount(
+											stripe.pending_charges,
+											stripe.currency,
+										),
+										<br key={1} />,
+									]}
+								/>
 							</p>
 						</>
 					) : null}
@@ -644,11 +650,15 @@ class AccountBilling extends React.Component<Props, State> {
 							<hr />
 							<h4>{t("Credits")}</h4>
 							<p>
-								Your account balance is{" "}
-								{this.currencyAmount(
-									stripe.credits,
-									stripe.currency,
-								)}.
+								<Trans
+									defaults="Your account balance is <0></0>."
+									components={[
+										this.currencyAmount(
+											stripe.credits,
+											stripe.currency,
+										),
+									]}
+								/>
 								<br />
 								<em className="text-muted">
 									{t(

@@ -29,6 +29,7 @@ import {
 } from "../helpers";
 import { DeckObj, FragmentChildProps, TableData } from "../interfaces";
 import LoadingSpinner from "../components/LoadingSpinner";
+import PrettyBlizzardAccount from "../components/text/PrettyBlizzardAccount";
 
 interface Props extends FragmentChildProps, InjectedTranslateProps {
 	account: Account | null;
@@ -357,7 +358,7 @@ class MyDecks extends React.Component<Props, State> {
 		let content = null;
 		const userAccounts = UserData.getAccounts();
 
-		if (!userAccounts.length) {
+		if (!userAccounts.length || !this.props.account) {
 			content = (
 				<div className="message-wrapper">
 					<Trans>
@@ -398,26 +399,33 @@ class MyDecks extends React.Component<Props, State> {
 				content = (
 					<div className="message-wrapper">
 						<Trans>
-							<h2>All set</h2>
+							<h2>{t("All set")}</h2>
 							<p>
-								We've successfully linked your Hearthstone
-								account{" "}
-								<strong>
-									{this.props.account &&
-										this.props.account.battletag}
-								</strong>{" "}
-								and will analyze incoming replays.
+								<Trans
+									defaults="We've successfully linked your Hearthstone account <0><0></0></0> and will and will analyze incoming replays."
+									components={[
+										<strong>
+											<PrettyBlizzardAccount
+												account={this.props.account}
+											/>
+										</strong>,
+									]}
+								/>
 							</p>
 							<p>
-								After you've played some games you'll find
-								statistics for all the decks you play right
-								here.
+								<Trans>
+									After you've played some games you'll find
+									statistics for all the decks you play right
+									here.
+								</Trans>
 							</p>
 							<p className="text-muted">
-								Note: It may take a few hours for new data to
-								appear on this page. If you are missing data,
-								make sure the filters in the sidebar are
-								correct!
+								<Trans>
+									Note: It may take a few hours for new data
+									to appear on this page. If you are missing
+									data, make sure the filters in the sidebar
+									are correct!
+								</Trans>
 							</p>
 						</Trans>
 					</div>

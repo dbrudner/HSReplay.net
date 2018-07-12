@@ -92,14 +92,16 @@ class AccountApi extends React.Component<Props, State> {
 												{accessToken.application.name}
 											</h4>
 											<div className="list-group-item-text">
-												<Trans>
-													Last used{" "}
-													<SemanticAge
-														date={
-															accessToken.last_used
-														}
-													/>
-												</Trans>
+												<Trans
+													defaults="Last used <0></0>"
+													components={[
+														<SemanticAge
+															date={
+																accessToken.last_used
+															}
+														/>,
+													]}
+												/>
 												<div
 													className="collapse"
 													style={{ display: "block" }}

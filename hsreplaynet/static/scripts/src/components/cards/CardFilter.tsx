@@ -1,8 +1,9 @@
 import React from "react";
 import InfoboxFilter from "../InfoboxFilter";
 import { CardData as Card } from "hearthstonejson-client";
-import { FilterConsumer } from "./CardFilterGroup";
+import { FilterGroupConsumer } from "./CardFilterGroup";
 import { CardFilterConsumer } from "./CardFilterManager";
+import LoadingSpinner from "../LoadingSpinner";
 
 interface Props {
 	value: any;
@@ -20,7 +21,7 @@ export default class CardFilter extends React.Component<Props> {
 						? dbfIds.map(dbfId => cardData.fromDbf(dbfId))
 						: [];
 					return (
-						<FilterConsumer>
+						<FilterGroupConsumer>
 							{filter => {
 								filter = this.props.filter || filter;
 								if (!filter) {
@@ -48,7 +49,7 @@ export default class CardFilter extends React.Component<Props> {
 									</InfoboxFilter>
 								);
 							}}
-						</FilterConsumer>
+						</FilterGroupConsumer>
 					);
 				}}
 			</CardFilterConsumer>

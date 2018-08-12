@@ -5,6 +5,8 @@ import { CardData as Card } from "hearthstonejson-client";
 const { Provider, Consumer } = React.createContext<FilterProps>({
 	cardData: null,
 	dbfIds: [],
+	values: {},
+	setValue: (x, y) => console.error("called setValue out of context"),
 });
 export { Consumer as CardFilterConsumer };
 
@@ -19,24 +21,24 @@ interface Props {
 }
 
 interface State {
+	filterValues: { [filterKey: string]: any };
 	filteredCards: number[] | null;
 }
 
 export interface FilterProps {
 	cardData: CardData | null;
 	dbfIds: number[];
+	values: { [filterKey: string]: any };
+	setValue: (filterKey: string, value: any) => void;
 }
 
 export default class CardFilterManager extends React.Component<Props, State> {
 	constructor(props: Props, context: any) {
 		super(props, context);
-		let filteredCards = null;
-		if (props.cardData) {
-			filteredCards = props.cardData
-				.collectible()
-				.map(card => card.dbfId);
-		}
-		this.state = { filteredCards };
+		this.state = {
+			filteredCards: CardFilterManager.getInitialCards(props.cardData),
+			filterValues: {},
+		};
 	}
 
 	public componentDidUpdate(
@@ -55,9 +57,9 @@ export default class CardFilterManager extends React.Component<Props, State> {
 	public static getDerivedStateFromProps(nextProps: Props, prevState: State) {
 		if (prevState.filteredCards === null && nextProps.cardData) {
 			return {
-				filteredCards: nextProps.cardData
-					.collectible()
-					.map(card => card.dbfId),
+				filteredCards: CardFilterManager.getInitialCards(
+					nextProps.cardData,
+				),
 			};
 		}
 		return null;
@@ -67,16 +69,59 @@ export default class CardFilterManager extends React.Component<Props, State> {
 		return (
 			<Provider
 				value={{
-					dbfIds: this.props.cardData
-						? this.props.cardData
-								.collectible()
-								.map(card => card.dbfId)
-						: [],
+					dbfIds: this.state.filteredCards,
 					cardData: this.props.cardData,
+					values: this.state.filterValues,
+					setValue: this.setValue,
 				}}
 			>
 				{this.props.children}
 			</Provider>
 		);
 	}
+
+	private static getInitialCards(cardData: CardData | null) {
+		if (!cardData) {
+			return null;
+		}
+		return cardData.collectible().map(card => card.dbfId);
+	}
+
+	private setValue = (filterKey: string, value: any): void => {
+		this.setState(state => {
+			return Object.assign({}, state, {
+				filteredCards: this.filter({
+					...state.filterValues,
+					[filterKey]: value,
+				}),
+				filterValues: Object.assign({}, state.filterValues, {
+					[filterKey]: value,
+				}),
+			});
+		});
+	};
+
+	private filter = (filterValues: {
+		[filterKey: string]: any;
+	}): number[] | null => {
+		const cards = CardFilterManager.getInitialCards(this.props.cardData);
+		if (!cards || !this.props.cardData) {
+			return null;
+		}
+		let cardsWithData = cards.map(dbfId =>
+			this.props.cardData.fromDbf(dbfId),
+		);
+		for (const [key, values] of Object.entries(filterValues)) {
+			cardsWithData = cardsWithData.filter(card => {
+				if (!values || !values.length) {
+					return true;
+				}
+				if (values.indexOf(card[key]) === -1) {
+					return false;
+				}
+				return true;
+			});
+		}
+		return cardsWithData.map(card => card.dbfId);
+	};
 }

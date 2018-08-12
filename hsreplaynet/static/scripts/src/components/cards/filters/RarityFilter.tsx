@@ -11,7 +11,8 @@ class RarityFilter extends React.Component<InjectedTranslateProps> {
 		return (
 			<CardFilterGroup
 				title={t("Rarity")}
-				filter={(card: Card, value: string) => value === card.rarity}
+				filter={this.filter}
+				filterKey="rarity"
 			>
 				<CardFilter value={"FREE"}>
 					{t("GLOBAL_RARITY_FREE")}
@@ -31,6 +32,8 @@ class RarityFilter extends React.Component<InjectedTranslateProps> {
 			</CardFilterGroup>
 		);
 	}
+
+	private filter = (card: Card, value: string) => value === card.rarity;
 }
 
 export default translate("hearthstone")(RarityFilter);

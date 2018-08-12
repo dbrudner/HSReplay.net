@@ -1,33 +1,50 @@
 import React from "react";
-import { CardFilterFunction } from "./CardFilterManager";
+import { CardFilterConsumer, CardFilterFunction } from "./CardFilterManager";
 import InfoboxFilterGroup from "../InfoboxFilterGroup";
 
 const { Provider, Consumer } = React.createContext<CardFilterFunction | null>(
 	null,
 );
-export { Consumer as FilterConsumer };
+export { Consumer as FilterGroupConsumer };
 
 interface Props {
 	title: string;
 	filter: CardFilterFunction;
+	filterKey: string;
 	collapsible?: boolean;
 }
 
 export default class CardFilterGroup extends React.Component<Props> {
 	public render(): React.ReactNode {
+		const { filterKey, collapsible } = this.props;
+
 		return (
-			<Provider value={this.props.filter}>
-				<InfoboxFilterGroup
-					header={this.props.title}
-					deselectable
-					selectedValue={null}
-					collapsed={this.props.collapsible}
-					collapsible={this.props.collapsible}
-					onClick={value => {}}
-				>
-					{this.props.children}
-				</InfoboxFilterGroup>
-			</Provider>
+			<CardFilterConsumer>
+				{({ values, setValue }) => (
+					<InfoboxFilterGroup
+						header={this.props.title}
+						deselectable
+						selectedValue={values[filterKey] || null}
+						collapsed={collapsible}
+						collapsible={collapsible}
+						onClick={(value, sender) => {
+							let newValue = values[filterKey] || [];
+							if (!value) {
+								newValue = newValue.filter(
+									test => test !== sender,
+								);
+							} else {
+								newValue.push(value);
+							}
+							setValue(filterKey, newValue);
+						}}
+					>
+						<Provider value={this.props.filter}>
+							{this.props.children}
+						</Provider>
+					</InfoboxFilterGroup>
+				)}
+			</CardFilterConsumer>
 		);
 	}
 }

@@ -11,7 +11,8 @@ class TypeFilter extends React.Component<InjectedTranslateProps> {
 		return (
 			<CardFilterGroup
 				title={t("Type")}
-				filter={(card: Card, value: string) => value === card.type}
+				filter={this.filter}
+				filterKey="type"
 				collapsible
 			>
 				<CardFilter value={"MINION"}>
@@ -29,6 +30,8 @@ class TypeFilter extends React.Component<InjectedTranslateProps> {
 			</CardFilterGroup>
 		);
 	}
+
+	private filter = (card: Card, value: string) => value === card.type;
 }
 
 export default translate("hearthstone")(TypeFilter);

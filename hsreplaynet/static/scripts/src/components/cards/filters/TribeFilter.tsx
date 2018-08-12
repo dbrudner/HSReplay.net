@@ -11,7 +11,8 @@ class TribeFilter extends React.Component<InjectedTranslateProps> {
 		return (
 			<CardFilterGroup
 				title={t("Tribe")}
-				filter={(card: Card, value: string) => value === card.race}
+				filter={this.filter}
+				filterKey="tribe"
 				collapsible
 			>
 				<CardFilter value={"BEAST"}>{t("GLOBAL_RACE_PET")}</CardFilter>
@@ -39,6 +40,8 @@ class TribeFilter extends React.Component<InjectedTranslateProps> {
 			</CardFilterGroup>
 		);
 	}
+
+	private filter = (card: Card, value: string) => value === card.race;
 }
 
 export default translate("hearthstone")(TribeFilter);

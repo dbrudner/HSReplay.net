@@ -23,6 +23,7 @@ import CardFilterManager from "../components/cards/CardFilterManager";
 import RarityFilter from "../components/cards/filters/RarityFilter";
 import TypeFilter from "../components/cards/filters/TypeFilter";
 import TribeFilter from "../components/cards/filters/TribeFilter";
+import TextFilter from "../components/cards/filters/TextFilter";
 
 interface Props extends FragmentChildProps, InjectedTranslateProps {
 	cardData: CardData;
@@ -281,7 +282,7 @@ class Cards extends React.Component<Props, State> {
 							<span className="glyphicon glyphicon-filter" />
 							{t("Filters")}
 						</button>
-						{/*{search}*/}
+						<TextFilter autofocus />
 						{content}
 					</main>
 				</CardFilterManager>

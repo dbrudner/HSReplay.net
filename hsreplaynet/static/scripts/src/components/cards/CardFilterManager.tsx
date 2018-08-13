@@ -2,18 +2,24 @@ import React from "react";
 import CardData from "../../CardData";
 import { CardData as Card } from "hearthstonejson-client";
 
-const { Provider, Consumer } = React.createContext<FilterProps>({
+const { Provider, Consumer } = React.createContext<CardFilterProps>({
 	cardData: null,
 	dbfIds: [],
-	values: {},
-	setValue: (x, y) => console.error("called setValue out of context"),
+	addFilter: x => console.error("called addFilter out of context"),
+	removeFilter: x => console.error("called removeFilter out of context"),
+	filters: [],
 });
-export { Consumer as CardFilterConsumer };
+export { Provider as CardFilterProvider, Consumer as CardFilterConsumer };
 
-export type CardFilterFunction = <T extends keyof Card>(
-	card: Card,
-	value: Card[T],
-) => boolean;
+export type CardFilterFunction = <T extends keyof Card>(card: Card) => boolean;
+
+export interface CardFilterProps {
+	cardData: CardData | null;
+	dbfIds: number[];
+	addFilter: (filter: CardFilterFunction) => void;
+	removeFilter: (filter: CardFilterFunction) => void;
+	filters: CardFilterFunction[];
+}
 
 interface Props {
 	cardData: CardData | null;
@@ -21,23 +27,16 @@ interface Props {
 }
 
 interface State {
-	filterValues: { [filterKey: string]: any };
+	filters: CardFilterFunction[];
 	filteredCards: number[] | null;
-}
-
-export interface FilterProps {
-	cardData: CardData | null;
-	dbfIds: number[];
-	values: { [filterKey: string]: any };
-	setValue: (filterKey: string, value: any) => void;
 }
 
 export default class CardFilterManager extends React.Component<Props, State> {
 	constructor(props: Props, context: any) {
 		super(props, context);
 		this.state = {
+			filters: [],
 			filteredCards: CardFilterManager.getInitialCards(props.cardData),
-			filterValues: {},
 		};
 	}
 
@@ -52,6 +51,7 @@ export default class CardFilterManager extends React.Component<Props, State> {
 		) {
 			this.props.onFilter(this.state.filteredCards);
 		}
+		console.log(this.state.filters);
 	}
 
 	public static getDerivedStateFromProps(nextProps: Props, prevState: State) {
@@ -71,8 +71,9 @@ export default class CardFilterManager extends React.Component<Props, State> {
 				value={{
 					dbfIds: this.state.filteredCards,
 					cardData: this.props.cardData,
-					values: this.state.filterValues,
-					setValue: this.setValue,
+					filters: this.state.filters,
+					addFilter: this.addFilter,
+					removeFilter: this.removeFilter,
 				}}
 			>
 				{this.props.children}
@@ -87,23 +88,31 @@ export default class CardFilterManager extends React.Component<Props, State> {
 		return cardData.collectible().map(card => card.dbfId);
 	}
 
-	private setValue = (filterKey: string, value: any): void => {
+	private addFilter = (filter: CardFilterFunction) => {
+		console.log("add");
 		this.setState(state => {
-			return Object.assign({}, state, {
-				filteredCards: this.filter({
-					...state.filterValues,
-					[filterKey]: value,
-				}),
-				filterValues: Object.assign({}, state.filterValues, {
-					[filterKey]: value,
-				}),
-			});
+			const filters = state.filters.concat(filter);
+			return {
+				filters,
+				filteredCards: this.filter(filters),
+			};
 		});
 	};
 
-	private filter = (filterValues: {
-		[filterKey: string]: any;
-	}): number[] | null => {
+	private removeFilter = (filter: CardFilterFunction) => {
+		console.log("remove");
+		this.setState(state => {
+			const filters = state.filters.filter(
+				toRemove => filter !== toRemove,
+			);
+			return {
+				filters,
+				filteredCards: this.filter(filters),
+			};
+		});
+	};
+
+	private filter = (filters: CardFilterFunction[]): number[] | null => {
 		const cards = CardFilterManager.getInitialCards(this.props.cardData);
 		if (!cards || !this.props.cardData) {
 			return null;
@@ -111,16 +120,8 @@ export default class CardFilterManager extends React.Component<Props, State> {
 		let cardsWithData = cards.map(dbfId =>
 			this.props.cardData.fromDbf(dbfId),
 		);
-		for (const [key, values] of Object.entries(filterValues)) {
-			cardsWithData = cardsWithData.filter(card => {
-				if (!values || !values.length) {
-					return true;
-				}
-				if (values.indexOf(card[key]) === -1) {
-					return false;
-				}
-				return true;
-			});
+		for (const filter of filters) {
+			cardsWithData = cardsWithData.filter(filter);
 		}
 		return cardsWithData.map(card => card.dbfId);
 	};

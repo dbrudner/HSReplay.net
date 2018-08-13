@@ -1,39 +1,58 @@
 import React from "react";
 import { InjectedTranslateProps, translate } from "react-i18next";
 import { CardData as Card } from "hearthstonejson-client";
-import CardFilter from "../CardFilter";
-import CardFilterGroup from "../CardFilterGroup";
+import CardFilterItem from "../CardFilterItem";
+import CardFilterItemGroup from "../CardFilterItemGroup";
+import { CardFilterFunction } from "../CardFilterManager";
 
 class RarityFilter extends React.Component<InjectedTranslateProps> {
 	public render(): React.ReactNode {
 		const { t } = this.props;
 
-		return (
-			<CardFilterGroup
+		/*return (
+			<CardFilterItemGroup
 				title={t("Rarity")}
 				filter={this.filter}
-				filterKey="rarity"
 			>
-				<CardFilter value={"FREE"}>
+				<CardFilterItem value={"FREE"}>
 					{t("GLOBAL_RARITY_FREE")}
-				</CardFilter>
-				<CardFilter value={"COMMON"}>
+				</CardFilterItem>
+				<CardFilterItem value={"COMMON"}>
 					{t("GLOBAL_RARITY_COMMON")}
-				</CardFilter>
-				<CardFilter value={"RARE"}>
+				</CardFilterItem>
+				<CardFilterItem value={"RARE"}>
 					{t("GLOBAL_RARITY_RARE")}
-				</CardFilter>
-				<CardFilter value={"EPIC"}>
+				</CardFilterItem>
+				<CardFilterItem value={"EPIC"}>
 					{t("GLOBAL_RARITY_EPIC")}
-				</CardFilter>
-				<CardFilter value={"LEGENDARY"}>
+				</CardFilterItem>
+				<CardFilterItem value={"LEGENDARY"}>
 					{t("GLOBAL_RARITY_LEGENDARY")}
-				</CardFilter>
-			</CardFilterGroup>
+				</CardFilterItem>
+			</CardFilterItemGroup>
+		);*/
+
+		return (
+			<>
+				<CardFilterItem filter={this.filterFree}>
+					{t("GLOBAL_RARITY_FREE")}
+				</CardFilterItem>
+				<CardFilterItem filter={this.filterCommon}>
+					{t("GLOBAL_RARITY_COMMON")}
+				</CardFilterItem>
+				<CardFilterItem filter={this.filterRare}>
+					{t("GLOBAL_RARITY_RARE")}
+				</CardFilterItem>
+			</>
 		);
 	}
 
-	private filter = (card: Card, value: string) => value === card.rarity;
+	private filterFree: CardFilterFunction = (card: Card) =>
+		card.rarity === "FREE";
+	private filterCommon: CardFilterFunction = (card: Card) =>
+		card.rarity === "COMMON";
+	private filterRare: CardFilterFunction = (card: Card) =>
+		card.rarity === "RARE";
 }
 
 export default translate("hearthstone")(RarityFilter);

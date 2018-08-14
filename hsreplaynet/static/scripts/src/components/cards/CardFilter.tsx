@@ -10,6 +10,12 @@ interface Props extends CardFilterProps {
 }
 
 class CardFilter extends React.Component<Props> {
+	public componentDidMount(): void {
+		if (this.props.filter) {
+			this.props.addFilter(this.props.filter);
+		}
+	}
+
 	public componentDidUpdate(
 		prevProps: Readonly<Props>,
 		prevState: Readonly<{}>,

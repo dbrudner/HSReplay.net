@@ -1,6 +1,7 @@
 import React from "react";
 import CardData from "../../CardData";
 import { CardData as Card } from "hearthstonejson-client";
+import memoize from "memoize-one";
 
 const { Provider, Consumer } = React.createContext<CardFilterProps>({
 	cardData: null,
@@ -28,7 +29,6 @@ interface Props {
 
 interface State {
 	filters: CardFilterFunction[];
-	filteredCards: number[] | null;
 }
 
 export default class CardFilterManager extends React.Component<Props, State> {
@@ -36,7 +36,6 @@ export default class CardFilterManager extends React.Component<Props, State> {
 		super(props, context);
 		this.state = {
 			filters: [],
-			filteredCards: CardFilterManager.getInitialCards(props.cardData),
 		};
 	}
 
@@ -46,30 +45,23 @@ export default class CardFilterManager extends React.Component<Props, State> {
 		snapshot?: any,
 	): void {
 		if (
-			prevState.filteredCards !== this.state.filteredCards &&
-			this.state.filteredCards !== null
+			prevState.filters !== this.state.filters ||
+			prevProps.cardData !== this.props.cardData
 		) {
-			this.props.onFilter(this.state.filteredCards);
+			this.props.onFilter(
+				this.filter(this.props.cardData, this.state.filters),
+			);
 		}
-		console.log(this.state.filters);
-	}
-
-	public static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-		if (prevState.filteredCards === null && nextProps.cardData) {
-			return {
-				filteredCards: CardFilterManager.getInitialCards(
-					nextProps.cardData,
-				),
-			};
-		}
-		return null;
 	}
 
 	public render(): React.ReactNode {
 		return (
 			<Provider
 				value={{
-					dbfIds: this.state.filteredCards,
+					dbfIds: this.filter(
+						this.props.cardData,
+						this.state.filters,
+					),
 					cardData: this.props.cardData,
 					filters: this.state.filters,
 					addFilter: this.addFilter,
@@ -94,7 +86,6 @@ export default class CardFilterManager extends React.Component<Props, State> {
 			const filters = state.filters.concat(filter);
 			return {
 				filters,
-				filteredCards: this.filter(filters),
 			};
 		});
 	};
@@ -107,22 +98,26 @@ export default class CardFilterManager extends React.Component<Props, State> {
 			);
 			return {
 				filters,
-				filteredCards: this.filter(filters),
 			};
 		});
 	};
 
-	private filter = (filters: CardFilterFunction[]): number[] | null => {
-		const cards = CardFilterManager.getInitialCards(this.props.cardData);
-		if (!cards || !this.props.cardData) {
-			return null;
-		}
-		let cardsWithData = cards.map(dbfId =>
-			this.props.cardData.fromDbf(dbfId),
-		);
-		for (const filter of filters) {
-			cardsWithData = cardsWithData.filter(filter);
-		}
-		return cardsWithData.map(card => card.dbfId);
-	};
+	private filter = memoize(
+		(
+			cardData: CardData | null,
+			filters: CardFilterFunction[],
+		): number[] | null => {
+			const cards = CardFilterManager.getInitialCards(cardData);
+			if (!cards || !this.props.cardData) {
+				return null;
+			}
+			let cardsWithData = cards.map(dbfId =>
+				this.props.cardData.fromDbf(dbfId),
+			);
+			for (const filter of filters) {
+				cardsWithData = cardsWithData.filter(filter);
+			}
+			return cardsWithData.map(card => card.dbfId);
+		},
+	);
 }

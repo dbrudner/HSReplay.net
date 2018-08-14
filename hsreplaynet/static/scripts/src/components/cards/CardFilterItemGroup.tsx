@@ -22,7 +22,7 @@ interface Props extends CardFilterProps {
 
 interface State {
 	filter: CardFilterFunction | null;
-	filters: { id: string, filter: CardFilterFunction}[];
+	filters: { id: string; filter: CardFilterFunction }[];
 }
 
 class CardFilterItemGroup extends React.Component<Props, State> {
@@ -68,31 +68,31 @@ class CardFilterItemGroup extends React.Component<Props, State> {
 
 		const { cardData, dbfIds } = this.props;
 
-		return <>
-			<CardFilter
-				filter={this.state.filter}
-			/>
-			<InfoboxFilterGroup
-				header={this.props.title}
-				deselectable
-				selectedValue={[]}
-				collapsed={collapsible}
-				collapsible={collapsible}
-				onClick={(value, sender) => {}}
-			>
-				<CardFilterProvider
-					value={{
-						cardData,
-						dbfIds,
-						addFilter: () => {}, //this.addFilter,
-						removeFilter: () => {}, //this.removeFilter,
-						filters: [],
-					}}
+		return (
+			<>
+				<CardFilter filter={this.state.filter} />
+				<InfoboxFilterGroup
+					header={this.props.title}
+					deselectable
+					selectedValue={[]}
+					collapsed={collapsible}
+					collapsible={collapsible}
+					onClick={(value, sender) => {}}
 				>
-					{this.props.children}
-				</CardFilterProvider>
-			</InfoboxFilterGroup>
-		</>;
+					<CardFilterProvider
+						value={{
+							cardData,
+							dbfIds,
+							addFilter: () => {}, // this.addFilter,
+							removeFilter: () => {}, // this.removeFilter,
+							filters: [],
+						}}
+					>
+						{this.props.children}
+					</CardFilterProvider>
+				</InfoboxFilterGroup>
+			</>
+		);
 	}
 }
 

@@ -2,7 +2,6 @@ import React from "react";
 import { InjectedTranslateProps, translate } from "react-i18next";
 import { CardData as Card } from "hearthstonejson-client";
 import CardFilterItem from "../CardFilterItem";
-import CardFilterItemGroup from "../CardFilterItemGroup";
 import { CardFilterFunction } from "../CardFilterManager";
 
 class RarityFilter extends React.Component<InjectedTranslateProps> {

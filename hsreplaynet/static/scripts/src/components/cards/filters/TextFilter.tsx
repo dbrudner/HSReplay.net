@@ -4,44 +4,34 @@ import { InjectedTranslateProps, translate } from "react-i18next";
 import CardFilter from "../CardFilter";
 import { CardFilterFunction } from "../CardFilterManager";
 import { cleanText, slangToCardId } from "../../../helpers";
+import memoize from "memoize-one";
 
 interface Props extends InjectedTranslateProps {
+	value: string;
+	onChange: (value: string) => void;
 	autofocus?: boolean;
 }
 
-interface State {
-	input: string;
-	filter: CardFilterFunction | null;
-}
-
-class TextFilter extends React.Component<Props, State> {
-	constructor(props: Props, context: any) {
-		super(props, context);
-		this.state = {
-			input: "",
-			filter: null,
-		};
-	}
-
+class TextFilter extends React.Component<Props> {
 	public render(): React.ReactNode {
 		const { t } = this.props;
 
 		const clearButton =
-			this.state.input !== "" ? (
+			this.props.value !== "" ? (
 				<span
 					className="glyphicon glyphicon-remove form-control-feedback"
-					onClick={() => this.setState({ input: "" })}
+					onClick={this.onClear}
 				/>
 			) : null;
 
 		return (
 			<>
-				<CardFilter filter={this.state.filter} />
+				<CardFilter filter={this.filter(this.props.value)} />
 				<div className="search-wrapper">
 					<div className="form-group has-feedback">
 						<input
 							type="text"
-							value={this.state.input}
+							value={this.props.value}
 							onChange={this.onChange}
 							autoFocus={this.props.autofocus}
 							placeholder={t("Search: Fireball, Magma Rager…")}
@@ -55,20 +45,23 @@ class TextFilter extends React.Component<Props, State> {
 		);
 	}
 
+	private onClear = () => {
+		this.props.onChange("");
+	};
+
 	private onChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const target = e.target;
 		if (!target) {
 			return;
 		}
-		const input = target.value;
-		this.setState({
-			input,
-			filter: input ? this.filter(target.value) : null,
-		});
+		this.props.onChange(target.value);
 	};
 
-	private filter = (input: string) => {
-		const parts = input
+	private filter = memoize((value: string): CardFilterFunction | null => {
+		if (!value) {
+			return null;
+		}
+		const parts = value
 			.split(",")
 			.map(x => {
 				x = x.trim();
@@ -102,7 +95,7 @@ class TextFilter extends React.Component<Props, State> {
 				(slangs && slangs.some(slang => card.id === slang))
 			);
 		};
-	};
+	});
 }
 
 export default translate()(TextFilter);

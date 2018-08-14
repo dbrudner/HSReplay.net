@@ -41,6 +41,8 @@ interface Props extends FragmentChildProps, InjectedTranslateProps {
 	setRankRange?: (rankRange: string) => void;
 	timeRange?: string;
 	setTimeRange?: (timeRange: string) => void;
+	text?: string;
+	setText?: (text: string) => void;
 
 	sortBy?: string;
 	setSortBy?: (sortBy: string) => void;
@@ -282,7 +284,11 @@ class Cards extends React.Component<Props, State> {
 							<span className="glyphicon glyphicon-filter" />
 							{t("Filters")}
 						</button>
-						<TextFilter autofocus />
+						<TextFilter
+							autofocus
+							value={this.props.text}
+							onChange={this.props.setText}
+						/>
 						{content}
 					</main>
 				</CardFilterManager>

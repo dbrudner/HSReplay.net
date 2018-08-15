@@ -23,6 +23,7 @@ import CardFilterManager from "../components/cards/CardFilterManager";
 import ClassFilter from "../components/cards/filters/ClassFilter";
 import CostFilter from "../components/cards/filters/CostFilter";
 import RarityFilter from "../components/cards/filters/RarityFilter";
+import SetFilter from "../components/cards/filters/SetFilter";
 import TypeFilter from "../components/cards/filters/TypeFilter";
 import TribeFilter from "../components/cards/filters/TribeFilter";
 import TextFilter from "../components/cards/filters/TextFilter";
@@ -48,6 +49,8 @@ interface Props extends FragmentChildProps, InjectedTranslateProps {
 	setCardClass?: (playerClass: string[]) => void;
 	cost?: string[];
 	setCost?: (cost: string[]) => void;
+	set?: string[];
+	setSet?: (set: string[]) => void;
 	rarity?: string[];
 	setRarity?: (rarity: string[]) => void;
 	type?: string[];
@@ -422,6 +425,10 @@ class Cards extends React.Component<Props, State> {
 				onChange={this.props.setRarity}
 			/>,
 		);
+		filters.push(
+			<SetFilter value={this.props.set} onChange={this.props.setSet} />,
+		);
+
 		filters.push(
 			<TypeFilter
 				value={this.props.type}

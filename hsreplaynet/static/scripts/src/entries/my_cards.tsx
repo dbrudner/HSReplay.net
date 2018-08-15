@@ -38,6 +38,7 @@ const render = (cardData: CardData) => {
 							cardClass: [],
 							cost: [],
 							rarity: [],
+							set: [],
 							type: [],
 							tribe: [],
 							mechanics: [],

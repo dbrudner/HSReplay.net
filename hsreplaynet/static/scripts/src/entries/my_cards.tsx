@@ -35,6 +35,7 @@ const render = (cardData: CardData) => {
 							sortBy: "timesPlayed",
 							sortDirection: "descending",
 							text: "",
+							cardClass: [],
 							rarity: [],
 							type: [],
 							tribe: [],

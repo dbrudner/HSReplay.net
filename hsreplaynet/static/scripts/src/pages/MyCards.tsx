@@ -3,7 +3,7 @@ import { InjectedTranslateProps, translate } from "react-i18next";
 import CardData from "../CardData";
 import DataManager from "../DataManager";
 import UserData, { Account } from "../UserData";
-import ClassFilter, { FilterOption } from "../components/ClassFilter";
+import { FilterOption } from "../components/ClassFilter";
 import DataInjector from "../components/DataInjector";
 import Feature from "../components/Feature";
 import InfoboxFilter from "../components/InfoboxFilter";
@@ -20,6 +20,7 @@ import AdContainer from "../components/ads/AdContainer";
 import AdUnit from "../components/ads/AdUnit";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CardFilterManager from "../components/cards/CardFilterManager";
+import ClassFilter from "../components/cards/filters/ClassFilter";
 import RarityFilter from "../components/cards/filters/RarityFilter";
 import TypeFilter from "../components/cards/filters/TypeFilter";
 import TribeFilter from "../components/cards/filters/TribeFilter";
@@ -36,14 +37,14 @@ interface Props extends FragmentChildProps, InjectedTranslateProps {
 	setFormat?: (format: string) => void;
 	gameType?: string;
 	setGameType?: (gameType: string) => void;
-	playerClass?: string;
-	setPlayerClass?: (playerClass: string) => void;
 	rankRange?: string;
 	setRankRange?: (rankRange: string) => void;
 	timeRange?: string;
 	setTimeRange?: (timeRange: string) => void;
 	text?: string;
 	setText?: (text: string) => void;
+	cardClass?: FilterOption[];
+	setCardClass?: (playerClass: string[]) => void;
 	rarity?: string[];
 	setRarity?: (rarity: string[]) => void;
 	type?: string[];
@@ -323,13 +324,8 @@ class Cards extends React.Component<Props, State> {
 			<Fragment key="class">
 				<h2>{t("Class")}</h2>
 				<ClassFilter
-					filters="AllNeutral"
-					hideAll
-					minimal
-					selectedClasses={[this.props.playerClass as FilterOption]}
-					selectionChanged={selected =>
-						this.props.setPlayerClass(selected[0])
-					}
+					value={this.props.cardClass}
+					onChange={this.props.setCardClass}
 				/>
 			</Fragment>,
 		);

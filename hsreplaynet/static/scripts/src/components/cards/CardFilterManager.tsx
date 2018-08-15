@@ -81,7 +81,6 @@ export default class CardFilterManager extends React.Component<Props, State> {
 	}
 
 	private addFilter = (filter: CardFilterFunction) => {
-		console.log("add");
 		this.setState(state => {
 			const filters = state.filters.concat(filter);
 			return {
@@ -91,7 +90,6 @@ export default class CardFilterManager extends React.Component<Props, State> {
 	};
 
 	private removeFilter = (filter: CardFilterFunction) => {
-		console.log("remove");
 		this.setState(state => {
 			const filters = state.filters.filter(
 				toRemove => filter !== toRemove,

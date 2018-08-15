@@ -35,6 +35,10 @@ const render = (cardData: CardData) => {
 							sortBy: "timesPlayed",
 							sortDirection: "descending",
 							text: "",
+							rarity: [],
+							type: [],
+							tribe: [],
+							mechanics: [],
 						}}
 						debounce="text"
 					>

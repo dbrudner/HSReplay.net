@@ -1,33 +1,45 @@
 import React from "react";
 import InfoboxFilter from "../InfoboxFilter";
-import { CardFilterConsumer, CardFilterFunction } from "./CardFilterManager";
+import { CardFilterConsumer } from "./CardFilterManager";
+import { CardFilterItemGroupConsumer } from "./CardFilterItemGroup";
 
 interface Props {
-	value?: string;
-	filter?: CardFilterFunction;
+	value: string;
 }
 
 class CardFilterItem extends React.Component<Props> {
 	public render(): React.ReactNode {
 		return (
-			<InfoboxFilter value={this.props.value}>
-				{this.props.children}
-				<CardFilterConsumer>
-					{({ cardData, dbfIds }) => {
-						if (!cardData || !this.props.filter) {
-							return null;
-						}
-						const cards = dbfIds.map(dbfId =>
-							cardData.fromDbf(dbfId),
-						);
-						return (
-							<span className="infobox-value">
-								{cards.filter(this.props.filter).length}
-							</span>
-						);
-					}}
-				</CardFilterConsumer>
-			</InfoboxFilter>
+			<CardFilterItemGroupConsumer>
+				{filter => (
+					<CardFilterConsumer>
+						{({ cardData, dbfIds }) => {
+							let matches = null;
+							if (cardData) {
+								const cards = dbfIds.map(dbfId =>
+									cardData.fromDbf(dbfId),
+								);
+								matches = cards.filter(filter(this.props.value))
+									.length;
+							}
+
+							return (
+								<InfoboxFilter
+									value={this.props.value}
+									disabled={matches === 0}
+								>
+									{this.props.children}
+									{matches !== null ? (
+										<span className="infobox-value">
+											{matches}
+										</span>
+									) : null}
+								</InfoboxFilter>
+							);
+						}}
+					</CardFilterConsumer>
+				)}
+			</CardFilterItemGroupConsumer>
 		);
 	}
 }

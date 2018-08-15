@@ -24,6 +24,7 @@ import RarityFilter from "../components/cards/filters/RarityFilter";
 import TypeFilter from "../components/cards/filters/TypeFilter";
 import TribeFilter from "../components/cards/filters/TribeFilter";
 import TextFilter from "../components/cards/filters/TextFilter";
+import MechanicsFilter from "../components/cards/filters/MechanicsFilter";
 
 interface Props extends FragmentChildProps, InjectedTranslateProps {
 	cardData: CardData;
@@ -43,6 +44,14 @@ interface Props extends FragmentChildProps, InjectedTranslateProps {
 	setTimeRange?: (timeRange: string) => void;
 	text?: string;
 	setText?: (text: string) => void;
+	rarity?: string[];
+	setRarity?: (rarity: string[]) => void;
+	type?: string[];
+	setType?: (type: string[]) => void;
+	tribe?: string[];
+	setTribe?: (tribe: string[]) => void;
+	mechanics?: string[];
+	setMechanics?: (mechanics: string[]) => void;
 
 	sortBy?: string;
 	setSortBy?: (sortBy: string) => void;
@@ -405,9 +414,30 @@ class Cards extends React.Component<Props, State> {
 			);
 		}
 
-		filters.push(<RarityFilter />);
-		filters.push(<TypeFilter />);
-		filters.push(<TribeFilter />);
+		filters.push(
+			<RarityFilter
+				value={this.props.rarity}
+				onChange={this.props.setRarity}
+			/>,
+		);
+		filters.push(
+			<TypeFilter
+				value={this.props.type}
+				onChange={this.props.setType}
+			/>,
+		);
+		filters.push(
+			<TribeFilter
+				value={this.props.tribe}
+				onChange={this.props.setTribe}
+			/>,
+		);
+		filters.push(
+			<MechanicsFilter
+				value={this.props.mechanics}
+				onChange={this.props.setMechanics}
+			/>,
+		);
 
 		return filters;
 	}

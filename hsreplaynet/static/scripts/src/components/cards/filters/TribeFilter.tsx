@@ -1,17 +1,23 @@
 import React from "react";
 import { InjectedTranslateProps, translate } from "react-i18next";
-import { CardData as Card } from "hearthstonejson-client";
 import CardFilterItem from "../CardFilterItem";
 import CardFilterItemGroup from "../CardFilterItemGroup";
 
-class TribeFilter extends React.Component<InjectedTranslateProps> {
+interface Props extends InjectedTranslateProps {
+	value: string[];
+	onChange: (value: string[]) => void;
+}
+
+class TribeFilter extends React.Component<Props> {
 	public render(): React.ReactNode {
 		const { t } = this.props;
 
 		return (
 			<CardFilterItemGroup
 				title={t("Tribe")}
-				filter={this.filter}
+				filterFactory={this.filter}
+				value={this.props.value}
+				onChange={this.props.onChange}
 				collapsible
 			>
 				<CardFilterItem value={"BEAST"}>
@@ -42,7 +48,7 @@ class TribeFilter extends React.Component<InjectedTranslateProps> {
 		);
 	}
 
-	private filter = (card: Card, value: string) => value === card.race;
+	private filter = value => card => card.race === value;
 }
 
 export default translate("hearthstone")(TribeFilter);

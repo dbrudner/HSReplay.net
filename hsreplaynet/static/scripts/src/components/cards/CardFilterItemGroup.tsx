@@ -23,6 +23,7 @@ interface Props extends CardFilterProps {
 	collapsible?: boolean;
 	value: string[];
 	onChange: (value: string[]) => void;
+	className?: string;
 }
 
 interface State {
@@ -55,6 +56,7 @@ class CardFilterItemGroup extends React.Component<Props, State> {
 					collapsed={collapsible}
 					collapsible={collapsible}
 					onClick={this.onChange}
+					className={this.props.className}
 				>
 					<CardFilterProvider
 						value={{

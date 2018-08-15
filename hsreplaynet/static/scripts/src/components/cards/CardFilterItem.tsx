@@ -5,6 +5,8 @@ import { CardFilterItemGroupConsumer } from "./CardFilterItemGroup";
 
 interface Props {
 	value: string;
+	className?: string;
+	noCount?: boolean;
 }
 
 class CardFilterItem extends React.Component<Props> {
@@ -27,9 +29,10 @@ class CardFilterItem extends React.Component<Props> {
 								<InfoboxFilter
 									value={this.props.value}
 									disabled={matches === 0}
+									className={this.props.className}
 								>
 									{this.props.children}
-									{matches !== null ? (
+									{!this.props.noCount && matches !== null ? (
 										<span className="infobox-value">
 											{matches}
 										</span>

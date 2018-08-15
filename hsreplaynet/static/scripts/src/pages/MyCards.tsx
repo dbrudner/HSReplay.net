@@ -21,6 +21,7 @@ import AdUnit from "../components/ads/AdUnit";
 import LoadingSpinner from "../components/LoadingSpinner";
 import CardFilterManager from "../components/cards/CardFilterManager";
 import ClassFilter from "../components/cards/filters/ClassFilter";
+import CostFilter from "../components/cards/filters/CostFilter";
 import RarityFilter from "../components/cards/filters/RarityFilter";
 import TypeFilter from "../components/cards/filters/TypeFilter";
 import TribeFilter from "../components/cards/filters/TribeFilter";
@@ -45,6 +46,8 @@ interface Props extends FragmentChildProps, InjectedTranslateProps {
 	setText?: (text: string) => void;
 	cardClass?: FilterOption[];
 	setCardClass?: (playerClass: string[]) => void;
+	cost?: string[];
+	setCost?: (cost: string[]) => void;
 	rarity?: string[];
 	setRarity?: (rarity: string[]) => void;
 	type?: string[];
@@ -321,13 +324,10 @@ class Cards extends React.Component<Props, State> {
 		];
 
 		filters.push(
-			<Fragment key="class">
-				<h2>{t("Class")}</h2>
-				<ClassFilter
-					value={this.props.cardClass}
-					onChange={this.props.setCardClass}
-				/>
-			</Fragment>,
+			<ClassFilter
+				value={this.props.cardClass}
+				onChange={this.props.setCardClass}
+			/>,
 		);
 
 		filters.push(
@@ -410,6 +410,12 @@ class Cards extends React.Component<Props, State> {
 			);
 		}
 
+		filters.push(
+			<CostFilter
+				value={this.props.cost}
+				onChange={this.props.setCost}
+			/>,
+		);
 		filters.push(
 			<RarityFilter
 				value={this.props.rarity}

@@ -36,6 +36,7 @@ const render = (cardData: CardData) => {
 							sortDirection: "descending",
 							text: "",
 							cardClass: [],
+							cost: [],
 							rarity: [],
 							type: [],
 							tribe: [],
